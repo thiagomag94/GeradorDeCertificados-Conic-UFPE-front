@@ -22,6 +22,9 @@ const FileUploader = () => {
   const [alert, setAlert] = useState('')
   const [progress, setProgress] = useState<number>(0)
   const [certificados, setCertificados] = useState<any>()
+  const [certificadosBaixados, setCertificadosBaixados] = useState<any>([])
+  const [isDownloaded, setDownloaded] = useState<boolean>(false)
+  
 
  
   
@@ -152,6 +155,8 @@ const FileUploader = () => {
         // Limpa o objeto URL após o download
         window.URL.revokeObjectURL(url);
         document.body.removeChild(link);
+        setCertificadosBaixados([...certificadosBaixados, certificados.filter((certificado:any)=> certificado.nome == fileName)])
+        setCertificados(certificados.filter((certificado:any)=> certificado.nome !== fileName))
       }
     
 
@@ -179,20 +184,20 @@ const FileUploader = () => {
            <div className={`${progress===100 ? '' : 'hidden'} absolute bottom-8 xl:bottom-32`}>
             <Image alt="spinner" className='animate-spin w-24 ' src={spinner}/>
            </div>
-            { message!= undefined && certificados  && <div className='min-h-screen w-full bg-neutral-900/40 backdrop-blur-lg gap-4 fixed top-0 left-0 right-0 flex justify-center items-center'>
+            {  certificados  && <div className='min-h-screen w-full bg-neutral-900/40 backdrop-blur-lg gap-4 fixed top-0 left-0 right-0 flex justify-center items-center'>
                   <div className='grid grid-cols-1 md:grid-cols-3 gap-y-4 gap-x-32  w-3/6  px-16 py-6 rounded-xl  content-normal h-[24rem] overflow-y-scroll'>
                     
                     {certificados.map((certificado:any, index:number)=> 
-                        certificado.arquivo && <div className='flex flex-col hover:bg-gradient-to-t hover:from-slate-400/20 hover:to-slate-50/40 text-slate-50 rounded-lg justify-center items-center cursor-pointer' key={index} onClick={()=>handleDownload(certificado.arquivo, certificado.nome)}>
+                        certificado.arquivo && <div className={`flex flex-col hover:bg-gradient-to-t hover:from-slate-400/20 hover:to-slate-50/40 text-slate-50 rounded-lg justify-center items-center cursor-pointer h-4/6 ${isDownloaded ? 'hidden' : ''}`} key={index} onClick={()=>handleDownload(certificado.arquivo, certificado.nome)}>
                           
                           <File title={certificado.nome} image={docx}/>
                         </div>)}
                    
                   </div>
-                  <div className='flex flex-col justify-center w-1/5 p-8 items-start bg-slate-200 text-purple-900'>
-                    <span className='font-bold'>Total de arquivos:{certificados.length}</span>
-                    <span className='font-bold'>Arquivos baixados:</span>
-                    <span className='font-bold'>Arquivos restantes:</span>
+                  <div className='flex flex-col gap-4 justify-center w-1/5 p-8 items-start bg-gradient-to-b from-slate-200 to-purple-400 text-purple-900 rounded-lg'>
+                    <span className='font-bold'>Total de arquivos: <span className="text-neutral-900">{certificados.length}</span></span>
+                    <span className='font-bold'>Arquivos baixados: <span className="text-neutral-900">{certificadosBaixados?.length}</span></span>
+                    <span className='font-bold'>Arquivos restantes: <span className="text-neutral-900">{certificados.length}</span> </span>
                   </div>
               </div> 
             }
