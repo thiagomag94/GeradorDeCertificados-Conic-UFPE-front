@@ -1,15 +1,16 @@
 'use client'
 import React, { useEffect, useRef, useState } from 'react'
+import { useRouter } from 'next/navigation';
 import axios from 'axios';
-import doc from 'public/doc.png'
-import txt from  'public/txt.png'
+import doc from 'public/doc.png';
+import txt from  'public/txt.png';
 import FilesGroup from '../FilesGroup/FileGroup';
 import ProgressBar from '../ProgressBar/ProgressBar';
-import spinner from 'public/spinner.png'
+import spinner from 'public/spinner.png';
 import Image from 'next/image';
 import Link from 'next/link';
 import File from '../Files/File';
-import docx from 'public/doc.png'
+import docx from 'public/doc.png';
 
 const FileUploader = () => {
   
@@ -21,10 +22,11 @@ const FileUploader = () => {
   const [message, setMessage] = useState('')
   const [alert, setAlert] = useState('')
   const [progress, setProgress] = useState<number>(0)
+  const [certificadosInit, setCertificadosInit] = useState<any>()
   const [certificados, setCertificados] = useState<any>()
   const [certificadosBaixados, setCertificadosBaixados] = useState<any>([])
   const [isDownloaded, setDownloaded] = useState<boolean>(false)
-  
+  const router = useRouter()
 
  
   
@@ -49,14 +51,15 @@ const FileUploader = () => {
 
   }, [message])
  
+ 
+  
   useEffect(()=>{
     console.log('mudou o alert', alert)
+    if(certificadosBaixados?.length===certificados?.length){
+      router.push('/')
+    }
 
-  }, [alert])
-  useEffect(()=>{
-    console.log('mudou o alert', alert)
-
-  }, [certificados])
+  }, [certificadosBaixados?.lenght])
 
   
   useEffect(()=>{
@@ -113,6 +116,7 @@ const FileUploader = () => {
               console.log(res.data.message, ' OK!')
               console.log(res.data.certificado)
               setCertificados(res.data.certificado)
+              setCertificadosInit(res.data.certificado)
               return res.data.message
             })
             .then((res)=>{
@@ -176,26 +180,26 @@ const FileUploader = () => {
            
            
            <button type="button" onClick={()=>handleUpload()} 
-            className={`${files.length===2 ? 'block' : 'hidden'} cursor-pointer mt-4 mb-4 px-8 py-4 rounded-lg shadow-xl bg-slate-50`}>
+            className={`${files.length===2 ? 'block' : 'hidden'} cursor-pointer mt-4 mb-4 px-8 py-4 rounded-lg drop-shadow-lg bg-slate-50`}>
               Upload
            </button>
            <ProgressBar message={message} value={progress} alert={alert}/>
-           <span className='text-lg lg:text-3xl xl:text-xl  mt-4 absolute bottom-16 p-8  w-full text-center animate-pulse'>{ progress===100 ? <span className='px-4 py-2 rounded-lg bg-purple-800 text-center text-slate-50 w-full'>{message}</span> : ''}</span>
-           <div className={`${progress===100 ? '' : 'hidden'} absolute bottom-8 xl:bottom-32`}>
+           <span className='text-lg lg:text-3xl xl:text-xl  mt-4 absolute bottom-16 p-8  w-full text-center animate-pulse'>{ progress===100 && certificadosInit.length !== certificadosBaixados.length  ? <span className='px-4 py-2 rounded-lg bg-purple-800 text-center text-slate-50 w-full'>{message}</span> : ''}</span>
+           <div className={`${progress===100 &&  certificadosInit.length !== certificadosBaixados.length ? '' : 'hidden'} absolute bottom-8 xl:bottom-32`}>
             <Image alt="spinner" className='animate-spin w-24 ' src={spinner}/>
            </div>
-            {  certificados  && <div className='min-h-screen w-full bg-neutral-900/40 backdrop-blur-lg gap-4 fixed top-0 left-0 right-0 flex justify-center items-center'>
+            {  certificados && certificadosInit.length !== certificadosBaixados.length && <div className='min-h-screen w-full bg-neutral-900/40 backdrop-blur-lg gap-4 fixed top-0 left-0 right-0 flex justify-center items-center'>
                   <div className='grid grid-cols-1 md:grid-cols-3 gap-y-4 gap-x-32  w-3/6  px-16 py-6 rounded-xl  content-normal h-[24rem] overflow-y-scroll'>
                     
                     {certificados.map((certificado:any, index:number)=> 
-                        certificado.arquivo && <div className={`flex flex-col hover:bg-gradient-to-t hover:from-slate-400/20 hover:to-slate-50/40 text-slate-50 rounded-lg justify-center items-center cursor-pointer h-4/6 ${isDownloaded ? 'hidden' : ''}`} key={index} onClick={()=>handleDownload(certificado.arquivo, certificado.nome)}>
+                        certificado.arquivo && <div className={`flex flex-col hover:bg-gradient-to-t hover:from-slate-400/20 hover:to-slate-50/40 text-slate-50 rounded-lg justify-center items-center cursor-pointer  ${isDownloaded ? 'hidden' : ''}`} key={index} onClick={()=>handleDownload(certificado.arquivo, certificado.nome)}>
                           
                           <File title={certificado.nome} image={docx}/>
                         </div>)}
                    
                   </div>
                   <div className='flex flex-col gap-4 justify-center w-1/5 p-8 items-start bg-gradient-to-b from-slate-200 to-purple-400 text-purple-900 rounded-lg'>
-                    <span className='font-bold'>Total de arquivos: <span className="text-neutral-900">{certificados.length}</span></span>
+                    <span className='font-bold'>Total de arquivos: <span className="text-neutral-900">{certificadosInit.length}</span></span>
                     <span className='font-bold'>Arquivos baixados: <span className="text-neutral-900">{certificadosBaixados?.length}</span></span>
                     <span className='font-bold'>Arquivos restantes: <span className="text-neutral-900">{certificados.length}</span> </span>
                   </div>
