@@ -11,6 +11,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import File from '../Files/File';
 import docx from 'public/doc.png';
+import DownloadAll from '../DonwloadAll/DownloadAll';
+import { saveAs } from 'file-saver';
 
 const FileUploader = () => {
   
@@ -144,21 +146,10 @@ const FileUploader = () => {
         });  
       }
       
-      function handleDownload( fileBuffer:any, fileName:string) {
+      function handleDownloadOne( fileBuffer:any, fileName:string) {
         const arrayBuffer = new Uint8Array(fileBuffer.data).buffer;
         const blob = new Blob([arrayBuffer], { type: 'application/octet-stream' });
-        const url = window.URL.createObjectURL(blob);
-      
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = fileName;
-        document.body.appendChild(link);
-      
-        link.click();
-      
-        // Limpa o objeto URL após o download
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(link);
+        saveAs(blob, fileName )
         setCertificadosBaixados([...certificadosBaixados, certificados.filter((certificado:any)=> certificado.nome == fileName)])
         setCertificados(certificados.filter((certificado:any)=> certificado.nome !== fileName))
       }
@@ -167,7 +158,7 @@ const FileUploader = () => {
   return (
         <div className='flex flex-col justify-between items-center w-full overflow-x-hidden'>
            <FilesGroup titleDoc={titleDoc} titleTxt={titleTxt} docImage={doc} txtImage={txt} alerta={alert}/>
-           <label htmlFor="file" className='w-full py-8 rounded-lg border-2 bg-gradient-to-r  from-indigo-400 text-slate-50 font-bold to-cyan-400 border-cyan-400 bg-slate-300 text-xl text-center mt-8'>Escolha os arquivos</label>
+           <label htmlFor="file" className='w-full py-8 rounded-lg border-2 bg-blue-900   text-slate-50 font-bold border-cyan-400  text-xl text-center mt-8 drop-shadow-xl'>Escolha os arquivos</label>
             <input id="file" type="file" accept='.txt, .doc, .docx' className='hidden appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' onChange={(e)=>handleFileChange(e)} multiple name="input" onClick={()=>{
                if(fileNames.length>1){
                setFiles([])
@@ -183,27 +174,28 @@ const FileUploader = () => {
             className={`${files.length===2 ? 'block' : 'hidden'} cursor-pointer mt-4 mb-4 px-8 py-4 rounded-lg drop-shadow-lg bg-slate-50`}>
               Upload
            </button>
-           <ProgressBar message={message} value={progress} alert={alert}/>
-           <span className='text-lg lg:text-3xl xl:text-xl  mt-4 absolute bottom-16 p-8  w-full text-center animate-pulse'>{ progress===100 && certificadosInit.length !== certificadosBaixados.length  ? <span className='px-4 py-2 rounded-lg bg-purple-800 text-center text-slate-50 w-full'>{message}</span> : ''}</span>
-           <div className={`${progress===100 &&  certificadosInit.length !== certificadosBaixados.length ? '' : 'hidden'} absolute bottom-8 xl:bottom-32`}>
-            <Image alt="spinner" className='animate-spin w-24 ' src={spinner}/>
-           </div>
-            {  certificados && certificadosInit.length !== certificadosBaixados.length && <div className='min-h-screen w-full bg-neutral-900/40 backdrop-blur-lg gap-4 fixed top-0 left-0 right-0 flex justify-center items-center'>
+           
+            {  certificados && certificadosInit.length !== certificadosBaixados.length && 
+            <div className='min-h-screen w-full bg-neutral-900/40 backdrop-blur-2xl gap-4 fixed top-0 left-0 right-0 flex justify-center items-center'>
                   <div className='grid grid-cols-1 md:grid-cols-3 gap-y-4 gap-x-32  w-3/6  px-16 py-6 rounded-xl  content-normal h-[24rem] overflow-y-scroll'>
                     
                     {certificados.map((certificado:any, index:number)=> 
-                        certificado.arquivo && <div className={`flex flex-col hover:bg-gradient-to-t hover:from-slate-400/20 hover:to-slate-50/40 text-slate-50 rounded-lg justify-center items-center cursor-pointer  ${isDownloaded ? 'hidden' : ''}`} key={index} onClick={()=>handleDownload(certificado.arquivo, certificado.nome)}>
+                        certificado.arquivo && <div className={`flex flex-col hover:bg-gradient-to-t hover:from-slate-400/20 hover:to-slate-50/40 text-slate-50 rounded-lg justify-center items-center cursor-pointer  ${isDownloaded ? 'hidden' : ''}`} key={index} onClick={()=>handleDownloadOne(certificado.arquivo, certificado.nome)}>
                           
                           <File title={certificado.nome} image={docx}/>
                         </div>)}
                    
                   </div>
-                  <div className='flex flex-col gap-4 justify-center w-1/5 p-8 items-start bg-gradient-to-b from-slate-200 to-purple-400 text-purple-900 rounded-lg'>
-                    <span className='font-bold'>Total de arquivos: <span className="text-neutral-900">{certificadosInit.length}</span></span>
-                    <span className='font-bold'>Arquivos baixados: <span className="text-neutral-900">{certificadosBaixados?.length}</span></span>
-                    <span className='font-bold'>Arquivos restantes: <span className="text-neutral-900">{certificados.length}</span> </span>
+                  <div className='flex flex-col justify-center items-center gap-4 w-1/5'>
+                    <div className='flex flex-col gap-4 justify-center w-full  p-8 items-start bg-gradient-to-b from-slate-200 to-purple-400 text-purple-900 rounded-lg'>
+                      <span className='font-bold'>Total de arquivos: <span className="text-neutral-900">{certificadosInit.length}</span></span>
+                      <span className='font-bold'>Arquivos baixados: <span className="text-neutral-900">{certificadosBaixados?.length}</span></span>
+                      <span className='font-bold'>Arquivos restantes: <span className="text-neutral-900">{certificados.length}</span> </span>
+                      <DownloadAll certificados = {certificados} />
+                    </div>
+                    
                   </div>
-              </div> 
+            </div> 
             }
         </div>
         

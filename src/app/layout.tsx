@@ -18,7 +18,7 @@ export default function RootLayout({
     <html lang="pt-BR">
 
       <body className={`bg-slate-200 overflow-x-hidden`}>
-        <div className='bg-gradient-to-l to-indigo-600 from-cyan-400 w-full h-[1rem]'></div>
+        <div className='bg-gradient-to-l to-blue-800 from-blue-900 w-full h-[1rem]'></div>
         {children}
       
       </body>
