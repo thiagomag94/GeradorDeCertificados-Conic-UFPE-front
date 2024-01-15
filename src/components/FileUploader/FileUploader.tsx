@@ -99,9 +99,10 @@ const FileUploader = () => {
       
       
           await handleFormData().then((res)=>{
-            axios.post('https://gerador-de-certificados-conic-ufpe.vercel.app/upload', res, {
+            axios.post('http://locahost:3001/upload', res, {
               headers: {
               'Content-Type': 'multipart/form-data',
+              'Access-Control-Allow-Origin': '*'
               },
               onUploadProgress: (progressEvent)=>{
                 if(progressEvent && progressEvent.total){
