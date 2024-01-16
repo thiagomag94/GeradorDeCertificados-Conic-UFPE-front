@@ -13,6 +13,8 @@ import File from '../Files/File';
 import docx from 'public/doc.png';
 import DownloadAll from '../DonwloadAll/DownloadAll';
 import { saveAs } from 'file-saver';
+import DownloadAllFirebase from '../DonwloadAllFirebase/DownloadAll';
+import { handleGetUrl } from '@/service/getURL';
 
 const FileUploader = () => {
   
@@ -147,10 +149,27 @@ const FileUploader = () => {
         });  
       }
       
-      function handleDownloadOne( fileBuffer:any, fileName:string) {
-        const arrayBuffer = new Uint8Array(fileBuffer.data).buffer;
-        const blob = new Blob([arrayBuffer], { type: 'application/octet-stream' });
-        saveAs(blob, fileName )
+      async function handleDownloadOne( fileName:string) {
+        const res = await handleGetUrl(fileName)
+        
+        const downloadURL = res?.data.downloadURL;
+
+        // Cria um elemento de link para download
+        const downloadLink = document.createElement('a');
+        downloadLink.href = downloadURL;
+
+        // Define o atributo 'download' para indicar que é um link de download
+        downloadLink.download = 'certificados-zip.zip';
+
+        // Adiciona o link ao DOM (não é necessário adicionar ao corpo da página)
+        document.body.appendChild(downloadLink);
+        
+        // Simula um clique no link para iniciar o download
+        downloadLink.click();
+
+        // Remove o link do DOM após o download
+        document.body.removeChild(downloadLink);
+      
         setCertificadosBaixados([...certificadosBaixados, certificados.filter((certificado:any)=> certificado.nome == fileName)])
         setCertificados(certificados.filter((certificado:any)=> certificado.nome !== fileName))
       }
@@ -181,7 +200,7 @@ const FileUploader = () => {
                   <div className='grid grid-cols-1 md:grid-cols-3 gap-y-4 gap-x-32  w-3/6  px-16 py-6 rounded-xl  content-normal h-[24rem] overflow-y-scroll'>
                     
                     {certificados.map((certificado:any, index:number)=> 
-                        certificado.arquivo && <div className={`flex flex-col hover:bg-gradient-to-t hover:from-slate-400/20 hover:to-slate-50/40 text-slate-50 rounded-lg justify-center items-center cursor-pointer  ${isDownloaded ? 'hidden' : ''}`} key={index} onClick={()=>handleDownloadOne(certificado.arquivo, certificado.nome)}>
+                        certificado.length!==0 && <div className={`flex flex-col hover:bg-gradient-to-t hover:from-slate-400/20 hover:to-slate-50/40 text-slate-50 rounded-lg justify-center items-center cursor-pointer  ${isDownloaded ? 'hidden' : ''}`} key={index} onClick={()=>handleDownloadOne(certificado.nome)}>
                           
                           <File title={certificado.nome} image={docx}/>
                         </div>)}
@@ -189,10 +208,7 @@ const FileUploader = () => {
                   </div>
                   <div className='flex flex-col justify-center items-center gap-4 w-1/5'>
                     <div className='flex flex-col gap-4 justify-center w-full  p-8 items-start bg-gradient-to-b from-slate-200 to-purple-400 text-purple-900 rounded-lg'>
-                      <span className='font-bold'>Total de arquivos: <span className="text-neutral-900">{certificadosInit.length}</span></span>
-                      <span className='font-bold'>Arquivos baixados: <span className="text-neutral-900">{certificadosBaixados?.length}</span></span>
-                      <span className='font-bold'>Arquivos restantes: <span className="text-neutral-900">{certificados.length}</span> </span>
-                      <DownloadAll certificados = {certificados} />
+                      <DownloadAllFirebase/>
                     </div>
                     
                   </div>
