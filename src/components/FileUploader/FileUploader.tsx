@@ -100,7 +100,7 @@ const FileUploader = () => {
   const handleUpload = async () => {
       
       
-          await handleFormData().then((res)=>{
+          await handleFormData().then((res:any)=>{
             axios.post('https://gerador-de-certificados-conic-ufpe.vercel.app/upload', res, {
               headers: {
               'Content-Type': 'multipart/form-data',
