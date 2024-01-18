@@ -17,7 +17,7 @@ const DownloadAllFirebase =  () => {
   const handleDownload = async() =>{
     
     
-     const res = await handleGetUrl('certificados-zip')
+     const res = await handleGetUrl('Certificados')
      console.log(res.data.downloadURL)
       const downloadURL = res?.data.downloadURL;
 

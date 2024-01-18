@@ -35,7 +35,7 @@ const DownloadAll = (props:any) => {
     
 
   return (
-        <div className='cursor-pointer bg-gradient-to-l from-purple-600 to-purple-900 text-slate-200 font-bold flex flex-col px-6 py-4 rounded-lg mt-4' onClick={downloadFiles}>
+        <div className='cursor-pointer bg-gradient-to-l from-purple-600 to-purple-900 text-slate-200 font-bold flex flex-col px-6 py-4 rounded-lg mt-16' onClick={downloadFiles}>
            baixar todos
         </div>
         
