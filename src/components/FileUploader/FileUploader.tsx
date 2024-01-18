@@ -101,7 +101,7 @@ const FileUploader = () => {
       
       
           await handleFormData().then((res:any)=>{
-            axios.post('http://localhost:3001/upload', res, {
+            axios.post('http://18.228.232.180:3001/upload', res, {
               headers: {
               'Content-Type': 'multipart/form-data',
               'Access-Control-Allow-Origin': '*'
