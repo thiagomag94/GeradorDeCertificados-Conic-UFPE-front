@@ -28,8 +28,10 @@ const FileUploader = () => {
   const [progress, setProgress] = useState<number>(0)
   const [certificadosInit, setCertificadosInit] = useState<any>()
   const [certificados, setCertificados] = useState<any>()
+  const [arquivozip, setArquivozip] = useState<any>()
   const [certificadosBaixados, setCertificadosBaixados] = useState<any>([])
   const [isDownloaded, setDownloaded] = useState<boolean>(false)
+  const [status, setStatus] = useState<number>()
   const router = useRouter()
 
  
@@ -52,7 +54,10 @@ const FileUploader = () => {
   
   useEffect(()=>{
     setFileNames([])
+    console.log(message)
+    
 
+    
   }, [message])
  
  
@@ -95,13 +100,18 @@ const FileUploader = () => {
     })
   }
 
+ 
+    
+
   
-  
+
   const handleUpload = async () => {
-      
-      
-          await handleFormData().then((res:any)=>{
-            axios.post('http://18.228.232.180:3001/upload', res, {
+           setAlert('')
+           const URL = 'http://177.71.142.138:3001'
+           try{
+            const formdata = await handleFormData()
+            const res1= await axios.post(`${URL}/upload`, formdata,  {
+              responseType:'blob',
               headers: {
               'Content-Type': 'multipart/form-data',
               'Access-Control-Allow-Origin': '*'
@@ -114,38 +124,71 @@ const FileUploader = () => {
                 }
               }
             })
-            .then((res)=>{
-          
-              console.log(res.data.message, ' OK!')
-              console.log(res.data.certificado)
-              setCertificados(res.data.certificado)
-              setCertificadosInit(res.data.certificado)
-              return res.data.message
-            })
-            .then((res)=>{
-                setMessage(res)
-                if(res==="Arquivos enviados...aguarde os certificados"){
-                  
-                  setFiles([])
-                  setAlert('upload')
-                }  
-              })
+
+            
+            if(res1.status===200){
+              setMessage("Arquivos enviados...aguarde os certificados")
+              setArquivozip(res1)
+              setFiles([])
+              setAlert('upload')
+              setStatus(200)
+
+              const res2 = await axios.post(`${URL}/getFilenames`, formdata,  { 
+                headers: {
+                'Content-Type': 'multipart/form-data',
+                'Access-Control-Allow-Origin': '*'
+                }})
               
-        }).catch(error => {
-          // Captura e trata o erro da solicitação
-          if (error.response) {
-            // O servidor retornou um código de status diferente de 2xx
-            console.log('Erro de resposta do servidor:', error.response.data);
-          } else if (error.request) {
-            // A solicitação foi feita, mas não houve resposta do servidor
-            console.log('Sem resposta do servidor:', error.request);
-          } else {
-            // Ocorreu um erro durante a configuração da solicitação
-            console.log('Erro ao configurar a solicitação:', error.message);
-          }
-          console.log('Erro na solicitação:', error.config);
-        });  
-      }
+              if(res2.status===200){
+                setMessage('Certificados recebidos')
+                  setCertificados(res2.data.certificado)
+                  setStatus(200)
+              }
+            }
+
+           }catch(error:any){
+            if (error.response) {
+              // O servidor retornou um código de status diferente de 2xx
+              console.log('Erro de resposta do servidor:', error.response.data);
+            } else if (error.request) {
+              // A solicitação foi feita, mas não houve resposta do servidor
+              console.log('Sem resposta do servidor:', error.request);
+            } else {
+              // Ocorreu um erro durante a configuração da solicitação
+              console.log('Erro ao configurar a solicitação:', error.message);
+            }
+            console.log('Erro na solicitação:', error.config);
+          };  
+
+          
+
+              
+          
+        
+
+            //.then((res)=>{
+              //console.log(res.data.message, ' OK!')
+              //console.log(res.data.certificado)
+              //setMessage("Arquivos enviados...aguarde os certificados")
+              //setArquivozip(res)
+              //setCertificados(res.data.certificado)
+              //setCertificadosInit(res.data.certificado)
+              //setArquivozip(res.data.arquivozip)
+              //return res
+            //})
+            //.then((res)=>{
+                //console.log(res.status)
+                //if(res.status===200){
+                 
+                  //console.log(message)
+                  //setFiles([])
+                  //setAlert('upload')
+                //}  
+              //})
+              
+       
+          
+      
       
       function handleDownloadOne( fileBuffer:any, fileName:string) {
         const arrayBuffer = new Uint8Array(fileBuffer.data).buffer;
@@ -156,7 +199,7 @@ const FileUploader = () => {
         setCertificados(certificados.filter((certificado:any)=> certificado.nome !== fileName))
       }
     
-
+  }
   return (
         <div className='flex flex-col justify-between items-center w-full'>
            <FilesGroup titleDoc={titleDoc} titleTxt={titleTxt} docImage={doc} txtImage={txt} alerta={alert}/>
@@ -176,20 +219,31 @@ const FileUploader = () => {
             className={`${files.length===2 ? 'block' : 'hidden'} cursor-pointer mt-4 mb-4 px-8 py-4 rounded-lg drop-shadow-lg bg-slate-50`}>
               Upload
            </button>
+           {/* certificados && certificadosInit.length !== certificadosBaixados.length*/}
            
-           <Image src={spinner} alt={"loading"} className={`${ progress>0 && message!="Arquivos enviados...aguarde os certificados"? 'block' : 'hidden'}  w-20 animate-spin`}/>
-            {  certificados && certificadosInit.length !== certificadosBaixados.length && <div className='min-h-screen w-full bg-neutral-900/40 backdrop-blur-2xl gap-4 fixed top-0 left-0 right-0 flex flex-col justify-center items-center'>
-                  
-                  <div className='grid grid-cols-1 md:grid-cols-3 gap-y-4 gap-x-20  w-3/6  px-16 py-6 rounded-xl  content-normal h-[30rem] overflow-y-scroll'>
+           <Image src={spinner} alt={"loading"} className={`${ progress>0  && message!=="Arquivos enviados...aguarde os certificados" ? 'block' : 'hidden'}  w-20 animate-spin`}/>
+           <span  className={`${ progress>0 && message!="Arquivos enviados...aguarde os certificados"? 'block' : 'hidden'} animate-pulse`}>Aguarde...estamos enviando os arquivos...</span>
+            {  arquivozip && 
+            <div className='min-h-screen w-full bg-neutral-900/40 backdrop-blur-2xl gap-4 fixed top-0 left-0 right-0 flex flex-row justify-center items-center'>
+                  <Image src={spinner} alt={"loading"} className={`${ progress>0 && status===200 && message==="Arquivos enviados...aguarde os certificados" ? 'absolute' : 'hidden'}  w-20 animate-spin`}/>
+                  <span  className={`${ progress>0 && message==="Arquivos enviados...aguarde os certificados"? 'block' : 'hidden'} animate-pulse`}>Aguarde...estamos gerando seus certificados...</span>
+                  <div className='z-0 absolute h-screen left-0 top-0 bg-blue-400/20 border-r-4 border-slate-200/20  w-3/6'>
+                    <h1 className='font-bold text-slate-200 text-3xl text-center mt-4'>CERTIFICADOS CONIC</h1> '
+                    <div className=' grid grid-cols-1 md:grid-cols-3 gap-y-4 gap-x-10   px-16 py-6   content-normal  overflow-y-scroll'>
+                      
+                      {certificados?.map((certificado:any, index:number)=> 
+                          certificado?.length!==0 && <div className={`border border-slate-200 flex flex-col hover:bg-gradient-to-t hover:from-slate-400/20 hover:to-slate-50/40 text-slate-50 rounded-lg justify-center items-center cursor-pointer  ${isDownloaded ? 'hidden' : ''}`} key={index} >
+                            
+                            <File title={certificado?.nome} image={docx}/>
+                      </div>)}
                     
-                    {certificados.map((certificado:any, index:number)=> 
-                        certificado.length!==0 && <div className={`border border-slate-200 flex flex-col hover:bg-gradient-to-t hover:from-slate-400/20 hover:to-slate-50/40 text-slate-50 rounded-lg justify-center items-center cursor-pointer  ${isDownloaded ? 'hidden' : ''}`} key={index} onClick={()=>handleDownloadOne(certificado.arquivo, certificado.nome)}>
-                          
-                          <File title={certificado.nome} image={docx}/>
-                        </div>)}
-                   
-                  </div>   
-                  <DownloadAll certificados={certificados}/>
+                    </div>   
+                    <div className='absolute bottom-0 w-full flex justify-center gap-2 h-[5rem] z-10 items-center px-24 drop-shadow-xl bg-slate-300'>
+                      { message==='Certificados recebidos' &&<DownloadAll  arquivozip={arquivozip} />}
+                      
+                    </div>
+                  </div>
+                  
                   
             </div> 
             }
