@@ -61,14 +61,7 @@ const FileUploader = () => {
   }, [message])
  
  
-  
-  useEffect(()=>{
-    console.log('mudou o alert', alert)
-    if(certificadosBaixados?.length===certificados?.length){
-      router.push('/')
-    }
 
-  }, [certificadosBaixados?.lenght])
 
   
   useEffect(()=>{
@@ -85,7 +78,7 @@ const FileUploader = () => {
     setTitleDoc(nomeDOC[0])
     const nomeDOCX = fileNames.filter((nome)=> nome.endsWith(".docx"))
     setTitleDoc(nomeDOCX[0])
-  }, [fileNames])
+  }, [fileNames, files])
 
   const handleFormData = async ()=>{
     return new Promise((resolve, reject)=>{
@@ -219,7 +212,7 @@ const FileUploader = () => {
             className={`${files.length===2 ? 'block' : 'hidden'} cursor-pointer mt-4 mb-4 px-8 py-4 rounded-lg drop-shadow-lg bg-slate-50`}>
               Upload
            </button>
-           {/* certificados && certificadosInit.length !== certificadosBaixados.length*/}
+          
            
            <Image src={spinner} alt={"loading"} className={`${ progress>0  && message!=="Arquivos enviados...aguarde os certificados" ? 'block' : 'hidden'}  w-20 animate-spin`}/>
            <span  className={`${ progress>0 && message!="Arquivos enviados...aguarde os certificados"? 'block' : 'hidden'} animate-pulse`}>Aguarde...estamos enviando os arquivos...</span>
@@ -228,7 +221,7 @@ const FileUploader = () => {
                   <Image src={spinner} alt={"loading"} className={`${ progress>0 && status===200 && message==="Arquivos enviados...aguarde os certificados" ? 'absolute' : 'hidden'}  w-20 animate-spin`}/>
                   <span  className={`${ progress>0 && message==="Arquivos enviados...aguarde os certificados"? 'block' : 'hidden'} animate-pulse`}>Aguarde...estamos gerando seus certificados...</span>
                   <div className='z-0 absolute h-screen left-0 top-0 bg-blue-400/20 border-r-4 border-slate-200/20  w-3/6'>
-                    <h1 className='font-bold text-slate-200 text-3xl text-center mt-4'>CERTIFICADOS CONIC</h1> '
+                    <h1 className='font-bold text-slate-200 text-3xl text-center mt-4'>CERTIFICADOS CONIC</h1> 
                     <div className=' grid grid-cols-1 md:grid-cols-3 gap-y-4 gap-x-10   px-16 py-6   content-normal  overflow-y-scroll'>
                       
                       {certificados?.map((certificado:any, index:number)=> 
