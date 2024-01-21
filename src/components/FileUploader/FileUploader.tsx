@@ -101,7 +101,8 @@ const FileUploader = () => {
   const handleUpload = async () => {
            setAlert('upload')
            setMessage('Enviando arquivos...')
-           const URL = 'http://177.71.142.138:3001'
+           const URL = 'http://54.232.159.147:3001'
+           
            try{
             const formdata = await handleFormData()
             const res1= await axios.post(`${URL}/upload`, formdata,  {
