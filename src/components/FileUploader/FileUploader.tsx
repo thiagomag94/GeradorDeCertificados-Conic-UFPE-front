@@ -100,6 +100,7 @@ const FileUploader = () => {
 
   const handleUpload = async () => {
            setAlert('upload')
+           setMessage('Enviando arquivos...')
            const URL = 'http://177.71.142.138:3001'
            try{
             const formdata = await handleFormData()
@@ -196,7 +197,7 @@ const FileUploader = () => {
   return (
         <div className='flex flex-col justify-between items-center w-full'>
            <FilesGroup titleDoc={titleDoc} titleTxt={titleTxt} docImage={doc} txtImage={txt} alerta={alert}/>
-           <label htmlFor="file" className='w-full py-4 rounded-lg  bg-blue-900 bg-[#58a4b0]  text-slate-50 font-bold   text-xl text-center mt-8 drop-shadow-xl'>Escolha os arquivos</label>
+           <label htmlFor="file" className='w-full py-4 rounded-lg  bg-blue-900 bg-[#58a4b0]  text-slate-50 font-bold   text-xl text-center mt-32 drop-shadow-xl'>Escolha os arquivos</label>
             <input id="file" type="file" accept='.txt, .doc, .docx' className='hidden appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' onChange={(e)=>handleFileChange(e)} multiple name="input" onClick={()=>{
                if(fileNames.length>1){
                setFiles([])
@@ -214,29 +215,26 @@ const FileUploader = () => {
           
            { alert==='upload' && <ProgressBar value={progress} message={message}/>}
            {progress===100 && <Image src={spinner} alt={"loading"} className={`${ progress>0  && message!=="Arquivos enviados...aguarde os certificados" ? 'block' : 'hidden'}  w-20 animate-spin`}/>}
-           <span  className={`${ progress>0 && message!="Arquivos enviados...aguarde os certificados"? 'block' : 'hidden'} animate-pulse`}>Aguarde...estamos enviando os arquivos...</span>
-            {  arquivozip && 
-            <div className='min-h-screen w-full bg-neutral-900/40 backdrop-blur-2xl gap-4 fixed top-0 left-0 right-0 flex flex-row justify-center items-center'>
-                  <Image src={spinner} alt={"loading"} className={`${ progress>0 && status===200 && message==="Arquivos enviados...aguarde os certificados" ? 'absolute' : 'hidden'}  w-20 animate-spin`}/>
-                  <span  className={`${ progress>0 && message==="Arquivos enviados...aguarde os certificados"? 'block' : 'hidden'} animate-pulse`}>Aguarde...estamos gerando seus certificados...</span>
-                  <div className='z-0 absolute h-screen left-0 top-0 bg-blue-400/20 border-r-4 border-slate-200/20  w-3/6'>
-                    <h1 className='font-bold text-slate-200 text-3xl text-center mt-4'>CERTIFICADOS CONIC</h1> 
-                    <div className=' grid grid-cols-1 md:grid-cols-3 gap-y-4 gap-x-10   px-16 py-6   content-normal  overflow-y-scroll'>
-                      
-                      {certificados?.map((certificado:any, index:number)=> 
-                          certificado?.length!==0 && <div className={`border border-slate-200 flex flex-col hover:bg-gradient-to-t hover:from-slate-400/20 hover:to-slate-50/40 text-slate-50 rounded-lg justify-center items-center cursor-pointer  ${isDownloaded ? 'hidden' : ''}`} key={index} >
-                            
-                            <File title={certificado?.nome} image={docx}/>
-                      </div>)}
-                    
-                    </div>   
-                    <div className='absolute bottom-0 w-full flex justify-center gap-2 h-[5rem] z-10 items-center px-24 drop-shadow-xl bg-slate-300'>
-                      { message==='Certificados recebidos' &&<DownloadAll  arquivozip={arquivozip} />}
-                      
-                    </div>
+           <span  className={`${ progress>0 && message!="Arquivos enviados...aguarde os certificados"? 'block' : 'hidden'} animate-pulse`}>{progress>0 ? 'Aguarde...estamos gerando seus certificados...' : message}</span>
+            {  arquivozip   && 
+            <div id="tela-certificados" className='min-h-screen w-full bg-neutral-900/40 backdrop-blur-2xl gap-4 fixed top-0 left-0 right-0 flex flex-row justify-center items-center'>
+              {
+                message==='Certificados recebidos' && <div className='z-0 absolute h-screen overflow-y-scroll left-0 top-0 bg-blue-400/20 border-r-4 border-slate-200/20  w-3/6 shadow-xl'>
+                  <div className='relative grid grid-cols-1 md:grid-cols-3 gap-y-4 gap-x-10   px-16 py-6   content-normal  '>
+                    {certificados?.map((certificado:any, index:number)=> 
+                        certificado?.length!==0 && <div className={`border border-slate-200 flex flex-col hover:bg-gradient-to-t hover:from-slate-400/20 hover:to-slate-50/40 text-slate-50 rounded-lg justify-center items-center cursor-pointer  ${isDownloaded ? 'hidden' : ''}`} key={index} >
+                          
+                          <File title={certificado?.nome} image={docx}/>
+                    </div>)}
+                  </div> 
+                
+                  <div className='fixed bottom-0 w-full flex justify-center gap-2 h-[5rem] z-10 items-center px-24 drop-shadow-xl bg-neutral-900/80 backdrop-blur-xl'>
+                    { message==='Certificados recebidos' && <DownloadAll  arquivozip={arquivozip} />}
                   </div>
-                  
-                  
+                </div> 
+              }
+              <Image src={spinner} alt={"loading"} className={`${ progress>0 && status===200 && message==="Arquivos enviados...aguarde os certificados" ? 'absolute left-25 top-50 ' : 'hidden'}  w-60 animate-spin`}/>
+              <span  className={`${ progress>0 && message==="Arquivos enviados...aguarde os certificados"? 'block ' : 'hidden'} text-slate-200 mt-40 animate-pulse`}>Aguarde...estamos gerando seus certificados...</span>         
             </div> 
             }
        </div>
