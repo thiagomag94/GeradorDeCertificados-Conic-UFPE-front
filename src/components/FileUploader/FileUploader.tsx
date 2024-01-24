@@ -242,10 +242,10 @@ const FileUploader = () => {
            {progress===100 && <Image src={spinner} alt={"loading"} className={`${ progress>0  && message!=="Arquivos enviados...aguarde os certificados" ? 'block' : 'hidden'}  w-20 animate-spin`}/>}
            <span  className={`${ progress>0 && message!="Arquivos enviados...aguarde os certificados"? 'block' : 'hidden'} animate-pulse`}>{progress>0 ? 'Aguarde...estamos gerando seus certificados...' : message}</span>
             {  arquivozip   && isOpen===true &&
-            <div id="tela-certificados" className='min-h-screen w-full bg-neutral-900/40 backdrop-blur-2xl gap-4 fixed top-0 left-0 right-0 flex flex-row justify-center items-center'>
+            <div id="tela-certificados" className=' min-h-screen w-full bg-neutral-900/40 backdrop-blur-2xl gap-4 fixed top-0 left-0 right-0 flex flex-row justify-center items-center'>
               {
-                message==='Certificados recebidos' && <div className='z-0 absolute h-screen overflow-y-scroll left-0 top-0 bg-blue-900/20 border-r-4 border-slate-200/20  w-3/6 shadow-xl'>
-                  <div className='relative grid grid-cols-1 md:grid-cols-3 gap-y-4 gap-x-10   px-16 py-6   content-normal  '>
+                message==='Certificados recebidos' && <div className=' z-0 absolute h-screen overflow-y-scroll left-0 top-0 bg-blue-900/20 border-r-4 border-slate-200/20  w-3/6 shadow-xl'>
+                  <div className=' relative grid grid-cols-1 md:grid-cols-3 gap-y-4 gap-x-10   px-16 py-6   content-normal  '>
                     {certificados?.map((certificado:any, index:number)=> 
                         certificado?.length!==0 && <div className={`border border-slate-200 flex flex-col hover:bg-gradient-to-t hover:from-slate-400/20 hover:to-slate-50/40 text-slate-50 rounded-lg justify-center items-center cursor-pointer  ${isDownloaded ? 'hidden' : ''}`} key={index} >
                           
@@ -258,7 +258,7 @@ const FileUploader = () => {
               }
               <Image src={spinner} alt={"loading"} className={`${ progress>0 && status===200  && message==="Arquivos enviados...aguarde os certificados" ? 'absolute left-25 top-50 ' : 'hidden'}  w-60 animate-spin`}/>
               <span  className={`${ progress>0 && message==="Arquivos enviados...aguarde os certificados"? 'block ' : 'hidden'} text-slate-200 mt-40 animate-pulse`}>Aguarde...estamos gerando seus certificados...</span>         
-              {progress>0 && status===200  && message==="Certificados recebidos" && <div className='absolute text-slate-50 gap-4 right-4 top-24 w-3/6 rounded-xl flex flex-col justify-start gap-2 z-10 items-start px-16 pt-16 pb-8 drop-shadow-xl bg-gradient-to-b from-blue-800/40 to-blue-700/60 backdrop-blur-md'>
+              {progress>0 && status===200  && message==="Certificados recebidos" && <div className='absolute text-slate-50 gap-4 right-4 top-24 w-3/6 rounded-xl flex flex-col justify-start gap-2 z-10 items-start px-16 pt-16 pb-8 drop-shadow-xl bg-gradient-to-b animate-fade from-blue-800/40 to-blue-700/60 backdrop-blur-md'>
                     <span className={`text-xl pacifico-regular  font-bold`}>{`Prontinho...seus certificados foram gerados com sucesso!`}</span>
                     <div id='buttons ' className='flex flex-row justify-start items-start w-full gap-4'>
                       { message==='Certificados recebidos' && <DownloadAll  arquivozip={arquivozip} />}
