@@ -1,5 +1,12 @@
 import FileUploader from "@/components/FileUploader/FileUploader";
 import FilesGroup from "@/components/FilesGroup/FileGroup";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+
+  title: 'Gerador de Certificados do CONIC'
+  
+}
 
 
 export default function Home() {
