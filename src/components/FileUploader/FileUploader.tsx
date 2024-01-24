@@ -240,7 +240,7 @@ const FileUploader = () => {
               }
               <Image src={spinner} alt={"loading"} className={`${ progress>0 && status===200 && message==="Arquivos enviados...aguarde os certificados" ? 'absolute left-25 top-50 ' : 'hidden'}  w-60 animate-spin`}/>
               <span  className={`${ progress>0 && message==="Arquivos enviados...aguarde os certificados"? 'block ' : 'hidden'} text-slate-200 mt-40 animate-pulse`}>Aguarde...estamos gerando seus certificados...</span>         
-              <div className='absolute text-slate-50 gap-4 right-4 w-2/5 rounded-xl flex flex-col justify-center gap-2 z-10 items-center px-24 pt-16 pb-8 drop-shadow-xl bg-gradient-to-r from-blue-800 to-blue-900 backdrop-blur-xl'>
+              <div className='absolute text-slate-50 gap-4 right-4 w-2/5 rounded-xl flex flex-col justify-center gap-2 z-10 items-center px-24 pt-16 pb-8 drop-shadow-xl bg-gradient-to-r from-blue-500 to-blue-700 backdrop-blur-xl'>
                     <span className={`text-xl text-center font-bold`}>{`Prontinho! Seus certificados foram gerados com sucesso!`}</span>
                     
                     <span className={`text-xl font-extralight text-center`}><b>Total:</b>{` ${certificados?.length} certificados`}</span>
