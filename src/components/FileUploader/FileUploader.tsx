@@ -258,7 +258,7 @@ const FileUploader = () => {
               }
               <Image src={spinner} alt={"loading"} className={`${ progress>0 && status===200  && message==="Arquivos enviados...aguarde os certificados" ? 'absolute left-25 top-50 ' : 'hidden'}  w-60 animate-spin`}/>
               <span  className={`${ progress>0 && message==="Arquivos enviados...aguarde os certificados"? 'block ' : 'hidden'} text-slate-200 mt-40 animate-pulse`}>Aguarde...estamos gerando seus certificados...</span>         
-              {progress>0 && status===200  && message==="Certificados recebidos" && <div className='absolute text-slate-50 gap-4 right-4 top-24 w-3/6 rounded-xl flex flex-col justify-start gap-2 z-10 items-start px-16 pt-16 pb-8 drop-shadow-xl bg-gradient-to-b animate-fade from-blue-800/40 to-blue-700/60 backdrop-blur-md'>
+              {progress>0 && status===200  && message==="Certificados recebidos" && <div className='absolute text-slate-50 gap-4 right-4 top-24 w-3/6 rounded-xl flex flex-col justify-start gap-2 z-10 items-start px-16 pt-16 pb-8 drop-shadow-xl bg-gradient-to-t animate-fade from-blue-800 to-blue-600 backdrop-blur-md'>
                     <span className={`text-xl pacifico-regular  font-bold`}>{`Prontinho...seus certificados foram gerados com sucesso!`}</span>
                     <div id='buttons ' className='flex flex-row justify-start items-start w-full gap-4'>
                       { message==='Certificados recebidos' && <DownloadAll  arquivozip={arquivozip} />}
