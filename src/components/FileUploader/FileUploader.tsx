@@ -153,11 +153,18 @@ const FileUploader = () => {
               }
             }
 
+            
+
            }catch(error:any){
             if (error.response) {
               // O servidor retornou um código de status diferente de 2xx
               console.log('Erro de resposta do servidor:', error.response.data);
               console.log(error.message)
+              setFiles([])
+              setFileNames([])
+              setMessage('')
+              setProgress(0)
+              setAlert('Envie um arquivo .txt e um arquivo .docx.')
             } else if (error.request) {
               // A solicitação foi feita, mas não houve resposta do servidor
               console.log('Sem resposta do servidor:', error.request);
@@ -213,8 +220,8 @@ const FileUploader = () => {
         <div className='flex flex-col justify-between items-center w-full'>
            <FilesGroup titleDoc={titleDoc} titleTxt={titleTxt} docImage={doc} txtImage={txt} alerta={alert}/>
            
-           { fileNames.length!==2 && message!=='Enviando arquivos...' &&<span className={`text-xl text-slate-900 text-center font-bold`}>{message}</span>}
-           { alert!=='escolhido' && alert!=='upload' && <span className={`absolute text-xl text-red-500 text-center font-bold bottom-32`}>{alert}</span>}
+           { fileNames.length<2 && message!=='Enviando arquivos...' &&<span className={`text-lg text-slate-900 text-center font-light mt-4`}>{message}</span>}
+           { alert!=='escolhido' && alert!=='upload' && <span className={`text-lg text-red-500 text-center font-light bottom-32 mt-4`}>{alert}</span>}
            <label htmlFor="file" className='w-full py-4 rounded-lg  bg-[#58a4b0]  text-slate-50 font-bold   text-xl text-center mt-32 drop-shadow-xl'>Escolha os arquivos</label>
             <input id="file" type="file" accept='.txt, .doc, .docx' className='hidden appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' onChange={(e)=>handleFileChange(e)} multiple name="input" onClick={()=>{
                if(fileNames.length>2){
@@ -249,17 +256,16 @@ const FileUploader = () => {
                   
                 </div> 
               }
-              <Image src={spinner} alt={"loading"} className={`${ progress>0 && status===200 && message==="Arquivos enviados...aguarde os certificados" ? 'absolute left-25 top-50 ' : 'hidden'}  w-60 animate-spin`}/>
+              <Image src={spinner} alt={"loading"} className={`${ progress>0 && status===200  && message==="Arquivos enviados...aguarde os certificados" ? 'absolute left-25 top-50 ' : 'hidden'}  w-60 animate-spin`}/>
               <span  className={`${ progress>0 && message==="Arquivos enviados...aguarde os certificados"? 'block ' : 'hidden'} text-slate-200 mt-40 animate-pulse`}>Aguarde...estamos gerando seus certificados...</span>         
-              <div className='absolute text-slate-50 gap-4 right-4 top-4 w-3/6 rounded-xl flex flex-col justify-start gap-2 z-10 items-start px-16 pt-16 pb-8 drop-shadow-xl bg-gradient-to-r from-blue-500 to-blue-700 backdrop-blur-xl'>
+              <div className='absolute text-slate-50 gap-4 right-4 top-24 w-3/6 rounded-xl flex flex-col justify-start gap-2 z-10 items-start px-16 pt-16 pb-8 drop-shadow-xl bg-gradient-to-b from-blue-800 to-blue-700 backdrop-blur-xl'>
                     <span className={`text-xl pacifico-regular  font-bold`}>{`Prontinho...seus certificados foram gerados com sucesso!`}</span>
-                    
-                    <span className={`text-xl font-extralight text-center`}><b>Total:</b>{` ${certificados?.length} certificados`}</span>
                     <div id='buttons ' className='flex flex-row justify-start items-start w-full gap-4'>
                       { message==='Certificados recebidos' && <DownloadAll  arquivozip={arquivozip} />}
                       <button className='cursor-pointer bg-slate-200 text-blue-900  font-bold flex  px-4 py-4 rounded-lg' onClick={()=>handleOpen()}>Gerar novamente</button>
                     </div>
-                    <span className={`text-md flex  font-normal gap-4 justify-center mt-4 bg-blue-400 p-2 rounded-lg`}><p className='text-xl'>&#10140;</p><p>{` Você pode conferir todos os certificados gerados clicando na aba ao lado e rolando a bolinha do mouse`}</p></span>
+                    <span className={`text-xl font-extralight text-center`}><b>Total:</b>{` ${certificados?.length} certificados`}</span>
+                    <span className={`text-md flex  font-normal gap-4 justify-center mt-4  p-2 rounded-lg`}><p className='text-xl'>&#10140;</p><p>{` Você pode conferir todos os certificados gerados clicando na aba ao lado e rolando a bolinha do mouse`}</p></span>
               </div>
             </div> 
             }
