@@ -33,6 +33,7 @@ const FileUploader = () => {
   const [certificadosBaixados, setCertificadosBaixados] = useState<any>([])
   const [isDownloaded, setDownloaded] = useState<boolean>(false)
   const [status, setStatus] = useState<number>()
+  const [isOpen, setOpen] = useState<boolean>(true)
   const router = useRouter()
 
  
@@ -98,7 +99,14 @@ const FileUploader = () => {
 
  
     
-
+  const handleOpen = ()=>{
+    setOpen(!isOpen)
+    setFiles([])
+    setFileNames([])
+    setProgress(0)
+    setMessage('')
+    setAlert('')
+  }
   
 
   const handleUpload = async () => {
@@ -141,6 +149,7 @@ const FileUploader = () => {
                 setMessage('Certificados recebidos')
                   setCertificados(res2.data.certificado)
                   setStatus(200)
+                  setOpen(true)
               }
             }
 
@@ -197,7 +206,8 @@ const FileUploader = () => {
         setCertificadosBaixados([...certificadosBaixados, certificados.filter((certificado:any)=> certificado.nome == fileName)])
         setCertificados(certificados.filter((certificado:any)=> certificado.nome !== fileName))
       }
-    
+      
+      
   }
   return (
         <div className='flex flex-col justify-between items-center w-full'>
@@ -224,7 +234,7 @@ const FileUploader = () => {
            { alert==='upload' && <ProgressBar value={progress} message={message}/>}
            {progress===100 && <Image src={spinner} alt={"loading"} className={`${ progress>0  && message!=="Arquivos enviados...aguarde os certificados" ? 'block' : 'hidden'}  w-20 animate-spin`}/>}
            <span  className={`${ progress>0 && message!="Arquivos enviados...aguarde os certificados"? 'block' : 'hidden'} animate-pulse`}>{progress>0 ? 'Aguarde...estamos gerando seus certificados...' : message}</span>
-            {  arquivozip   && 
+            {  arquivozip   && isOpen===true &&
             <div id="tela-certificados" className='min-h-screen w-full bg-neutral-900/40 backdrop-blur-2xl gap-4 fixed top-0 left-0 right-0 flex flex-row justify-center items-center'>
               {
                 message==='Certificados recebidos' && <div className='z-0 absolute h-screen overflow-y-scroll left-0 top-0 bg-blue-900/20 border-r-4 border-slate-200/20  w-3/6 shadow-xl'>
@@ -245,8 +255,11 @@ const FileUploader = () => {
                     <span className={`text-xl  font-bold`}>{`Prontinho...seus certificados foram gerados com sucesso!`}</span>
                     
                     <span className={`text-xl font-extralight text-center`}><b>Total:</b>{` ${certificados?.length} certificados`}</span>
-                    { message==='Certificados recebidos' && <DownloadAll  arquivozip={arquivozip} />}
-                    <span className={`text-md  font-normal mt-4 bg-blue-400 p-2 rounded-lg`}>&#10140;{` Você pode conferir todos os certificados gerados ao lado rolando a bolinha do mouse`}</span>
+                    <div id='buttons ' className='flex flex-row justify-start items-start w-full gap-4'>
+                      { message==='Certificados recebidos' && <DownloadAll  arquivozip={arquivozip} />}
+                      <button className='cursor-pointer bg-slate-200 text-blue-900 hover:bg-blue-900 hover:text-slate-50 font-bold flex  px-4 py-4 rounded-lg' onClick={()=>handleOpen()}>Gerar novamente</button>
+                    </div>
+                    <span className={`text-md flex  font-normal gap-4 justify-center mt-4 bg-blue-400 p-2 rounded-lg`}><p className='text-xl'>&#10140;</p><p>{` Você pode conferir todos os certificados gerados clicando na aba ao lado e rolando a bolinha do mouse`}</p></span>
               </div>
             </div> 
             }
