@@ -37,26 +37,26 @@ const FileUploader = () => {
  
   
   function handleFileChange(e:any) {
-   
+    setMessage("Escolha o próximo arquivo")
     if(files.length<2){
       const selectedFiles = Array.from(e.target.files)
       selectedFiles.map((file:any)=>  setFileNames((prevNames:string[])=>[...prevNames, file.name]))
       setFiles((prevFiles:File[])=> [...prevFiles, ...selectedFiles])
       
-    }else{
+      console.log("file length", files.length)
+      console.log("files", files)
+    }else if (files.length ===2){
       const selectedFiles = Array.from(e.target.files)
       setFiles([...selectedFiles])
-
-
-    }
+      selectedFiles.map((file:any)=>  setFileNames([file.name]))
       
+    } 
   }
   
   useEffect(()=>{
+   if (message!== 'Escolha o próximo arquivo' && message!==''){
     setFileNames([])
-    console.log(message)
-    
-
+   }
     
   }, [message])
  
@@ -65,10 +65,12 @@ const FileUploader = () => {
 
   
   useEffect(()=>{
-    console.log('array de nomes', fileNames)
-    console.log('arquivos', files)
-    if(fileNames.length===2){
+    console.log(files)
+    console.log(fileNames)
+    if(fileNames.length===1 || fileNames.length=== 2){
       setAlert('escolhido')
+    } else if (fileNames.length>2){
+      setAlert('Escolha somente dois arquivos')
     }
 
     
@@ -145,6 +147,7 @@ const FileUploader = () => {
             if (error.response) {
               // O servidor retornou um código de status diferente de 2xx
               console.log('Erro de resposta do servidor:', error.response.data);
+              console.log(error.message)
             } else if (error.request) {
               // A solicitação foi feita, mas não houve resposta do servidor
               console.log('Sem resposta do servidor:', error.request);
@@ -198,21 +201,24 @@ const FileUploader = () => {
   return (
         <div className='flex flex-col justify-between items-center w-full'>
            <FilesGroup titleDoc={titleDoc} titleTxt={titleTxt} docImage={doc} txtImage={txt} alerta={alert}/>
+           
+           { fileNames.length!==2 && message!=='Enviando arquivos...' &&<span className={`text-xl text-slate-900 text-center font-bold`}>{message}</span>}
+           { alert!=='escolhido' && alert!=='upload' && <span className={`absolute text-xl text-red-500 text-center font-bold bottom-32`}>{alert}</span>}
            <label htmlFor="file" className='w-full py-4 rounded-lg  bg-[#58a4b0]  text-slate-50 font-bold   text-xl text-center mt-32 drop-shadow-xl'>Escolha os arquivos</label>
             <input id="file" type="file" accept='.txt, .doc, .docx' className='hidden appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' onChange={(e)=>handleFileChange(e)} multiple name="input" onClick={()=>{
-               if(fileNames.length>1){
+               if(fileNames.length>2){
                setFiles([])
                setFileNames([])
                setProgress(0)
 
-               }
+               } 
                setMessage('')
-               setAlert('')
+              
                setProgress(0)
             }}/>
            
            
-           {progress===0 && <button type="button" onClick={()=>handleUpload()} className={`${files.length===2 ? 'block' : 'hidden'} w-full bg-blue-900 cursor-pointer mt-4 mb-4 px-8 py-4 rounded-lg drop-shadow-lg text-slate-50 `}>Upload</button>}
+           {fileNames.length===2 && <button type="button" onClick={()=>handleUpload()} className={` w-full bg-blue-900 cursor-pointer mt-4 mb-4 px-8 py-4 rounded-lg drop-shadow-lg text-slate-50 `}>Upload</button>}
           
            { alert==='upload' && <ProgressBar value={progress} message={message}/>}
            {progress===100 && <Image src={spinner} alt={"loading"} className={`${ progress>0  && message!=="Arquivos enviados...aguarde os certificados" ? 'block' : 'hidden'}  w-20 animate-spin`}/>}
@@ -229,7 +235,8 @@ const FileUploader = () => {
                     </div>)}
                   </div> 
                 
-                  <div className='fixed bottom-0 w-full flex justify-center gap-2 h-[5rem] z-10 items-center px-24 drop-shadow-xl bg-neutral-900/80 backdrop-blur-xl'>
+                  <div className='absolute right-0 w-4/5 flex flex-col justify-center gap-2 z-10 items-center px-24 drop-shadow-xl bg-neutral-900/80 backdrop-blur-xl'>
+                    <span className={`text-xl text-center font-bold`}>{`Foram gerados ${certificados?.length} certificados`}</span>
                     { message==='Certificados recebidos' && <DownloadAll  arquivozip={arquivozip} />}
                   </div>
                 </div> 
