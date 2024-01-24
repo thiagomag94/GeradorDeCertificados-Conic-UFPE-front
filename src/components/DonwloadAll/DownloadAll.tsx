@@ -44,7 +44,7 @@ const DownloadAll = (props:any) => {
     
 
   return (
-        <div className='cursor-pointer bg-blue-900 text-slate-50  font-bold flex flex-col px-4 py-4 rounded-lg ' onClick={downloadFiles}>
+        <div className='cursor-pointer bg-blue-900 text-slate-50  font-bold flex flex-col px-4 py-4 rounded-lg tracking-wider' onClick={downloadFiles}>
            Fazer Download
         </div>
         
