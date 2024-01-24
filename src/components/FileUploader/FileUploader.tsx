@@ -222,7 +222,7 @@ const FileUploader = () => {
            
            { fileNames.length<2 && message!=='Enviando arquivos...' &&<span className={`text-lg text-slate-900 text-center font-light mt-4`}>{message}</span>}
            { alert!=='escolhido' && alert!=='upload' && <span className={`text-lg text-red-500 text-center font-light bottom-32 mt-4`}>{alert}</span>}
-           <label htmlFor="file" className='w-full py-4 rounded-lg  bg-[#58a4b0]  text-slate-50 font-bold   text-xl text-center mt-32 drop-shadow-xl'>Escolha os arquivos</label>
+           <label htmlFor="file" className='w-full py-4 rounded-lg  bg-[#58a4b0]  text-slate-50 font-bold   text-xl text-center mt-12 drop-shadow-xl'>Escolha os arquivos</label>
             <input id="file" type="file" accept='.txt, .doc, .docx' className='hidden appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' onChange={(e)=>handleFileChange(e)} multiple name="input" onClick={()=>{
                if(fileNames.length>2){
                setFiles([])
