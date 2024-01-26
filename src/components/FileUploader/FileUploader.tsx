@@ -11,11 +11,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import File from '../Files/File';
 import docx from 'public/doc.png';
+import excel from 'public/excel.png'
 import DownloadAll from '../DonwloadAll/DownloadAll';
 import { saveAs } from 'file-saver';
-import DownloadAllFirebase from '../DonwloadAllFirebase/DownloadAll';
-import { handleGetUrl } from '@/service/getURL';
-import CloseIcon from '@mui/icons-material/Close';
+
 
 const FileUploader = () => {
   
@@ -24,6 +23,7 @@ const FileUploader = () => {
   const [fileNames, setFileNames] = useState<string[]>([]);
   const [titleTxt, setTitleTxt] = useState<string>('')
   const [titleDoc, setTitleDoc] = useState<string>('')
+  const [titleExcel, setTitleExcel] = useState<string>('')
   const [message, setMessage] = useState('')
   const [alert, setAlert] = useState('')
   const [progress, setProgress] = useState<number>(0)
@@ -82,6 +82,8 @@ const FileUploader = () => {
     setTitleDoc(nomeDOC[0])
     const nomeDOCX = fileNames.filter((nome)=> nome.endsWith(".docx"))
     setTitleDoc(nomeDOCX[0])
+    const nomeEXCEL = fileNames.filter((nome)=> nome.endsWith(".xlsx"))
+    setTitleExcel(nomeEXCEL[0])
   }, [fileNames, files])
 
   const handleFormData = async ()=>{
@@ -113,6 +115,8 @@ const FileUploader = () => {
            setAlert('upload')
            setMessage('Enviando arquivos...')
            const URL = 'http://54.232.159.147:3001'
+           const URL2 = 'http://localhost:3001'
+           
            
            try{
             const formdata = await handleFormData()
@@ -151,7 +155,20 @@ const FileUploader = () => {
                   setStatus(200)
                   setOpen(true)
               }
+              
             }
+
+            if(res1.status===400){
+              setFiles([])
+              setFileNames([])
+              setMessage('')
+              setProgress(0)
+              setAlert('Envie um arquivo .txt ou .xlsx contendo os nomes e um arquivo .docx. para template')
+              setStatus(res1.status)
+              console.log(res1.status)
+            }
+
+            
 
             
 
@@ -159,12 +176,23 @@ const FileUploader = () => {
             if (error.response) {
               // O servidor retornou um código de status diferente de 2xx
               console.log('Erro de resposta do servidor:', error.response.data);
+              if(error.response.status===500){
+                setStatus(error.response.status)
+                console.log(error.response.status)
+                setAlert('Deu algum erro no servidor')
+              }
+              if(error.response.status===400){
+                setStatus(error.response.status)
+                console.log(error.response.status)
+                setAlert('Envie um arquivo .txt ou .xlsx contendo os nomes e um arquivo .docx. para template')
+              }
               console.log(error.message)
+             
               setFiles([])
               setFileNames([])
               setMessage('')
               setProgress(0)
-              setAlert('Envie um arquivo .txt e um arquivo .docx.')
+              
             } else if (error.request) {
               // A solicitação foi feita, mas não houve resposta do servidor
               console.log('Sem resposta do servidor:', error.request);
@@ -218,7 +246,7 @@ const FileUploader = () => {
   }
   return (
         <div className='flex flex-col justify-between items-center w-full'>
-           <FilesGroup titleDoc={titleDoc} titleTxt={titleTxt} docImage={doc} txtImage={txt} alerta={alert}/>
+           <FilesGroup titleDoc={titleDoc} titleTxt={titleTxt} titleExcel={titleExcel} docImage={doc} txtImage={txt} excelImage={excel}  alerta={alert}/>
            
            { fileNames.length<2 && message!=='Enviando arquivos...' &&<span className={`text-lg text-slate-900 text-center font-light mt-4`}>{message}</span>}
            { alert!=='escolhido' && alert!=='upload' && <span className={`text-lg text-red-500 text-center font-light bottom-32 mt-4`}>{alert}</span>}

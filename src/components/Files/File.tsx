@@ -7,12 +7,12 @@ const File = (props:any) => {
     
     return (
           <div className={`  w-4/5`}>
-            <div className={` flex flex-col justify-center items-center pb-2 `}>
+            <div className={` flex flex-col justify-center items-center  pb-2 `}>
                 <Image src={image} alt="imagem dos arquivos de upload" className="drop-shadow-xl"/>
-                <span className="text-center">{title}</span>
+                <span className="flex text-center  ">{title}</span>
             </div>
             
-            
+             
              
           </div>
           
