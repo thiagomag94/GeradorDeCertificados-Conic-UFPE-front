@@ -15,6 +15,8 @@ import excel from 'public/excel.png'
 import DownloadAll from '../DonwloadAll/DownloadAll';
 import { saveAs } from 'file-saver';
 
+import InputForm from '../InputForm/inputForm';
+
 
 const FileUploader = () => {
   
@@ -24,6 +26,8 @@ const FileUploader = () => {
   const [titleTxt, setTitleTxt] = useState<string>('')
   const [titleDoc, setTitleDoc] = useState<string>('')
   const [titleExcel, setTitleExcel] = useState<string>('')
+  const [excelArray, setExcelArray] = useState<string[]>([]);
+
   const [message, setMessage] = useState('')
   const [alert, setAlert] = useState('')
   const [progress, setProgress] = useState<number>(0)
@@ -34,6 +38,7 @@ const FileUploader = () => {
   const [isDownloaded, setDownloaded] = useState<boolean>(false)
   const [status, setStatus] = useState<number>()
   const [isOpen, setOpen] = useState<boolean>(true)
+
   const router = useRouter()
 
  
@@ -90,10 +95,14 @@ const FileUploader = () => {
     return new Promise((resolve, reject)=>{
       const formData = new FormData()
       if (files.length>0){
-
+        
         files.map((file:File)=> {
           formData.append("files", file)
+          console.log(formData)
+        
         })
+
+        formData.append("excelProps", JSON.stringify(excelArray))
         resolve(formData)
       }
     })
@@ -109,6 +118,8 @@ const FileUploader = () => {
     setMessage('')
     setAlert('')
   }
+
+ 
   
 
   const handleUpload = async () => {
@@ -120,7 +131,11 @@ const FileUploader = () => {
            
            try{
             const formdata = await handleFormData()
-            const res1= await axios.post(`${URL}/upload`, formdata,  {
+            const payload = {
+              files:formdata,
+              excelProps: excelArray
+            }
+            const res1= await axios.post(`${URL2}/upload`, formdata,  {
               responseType:'blob',
               headers: {
               'Content-Type': 'multipart/form-data',
@@ -143,7 +158,7 @@ const FileUploader = () => {
               setAlert('upload')
               setStatus(200)
 
-              const res2 = await axios.post(`${URL}/getFilenames`, formdata,  { 
+              const res2 = await axios.post(`${URL2}/getFilenames`, formdata,  { 
                 headers: {
                 'Content-Type': 'multipart/form-data',
                 'Access-Control-Allow-Origin': '*'
@@ -249,9 +264,12 @@ const FileUploader = () => {
            <FilesGroup titleDoc={titleDoc} titleTxt={titleTxt} titleExcel={titleExcel} docImage={doc} txtImage={txt} excelImage={excel}  alerta={alert}/>
            
            { fileNames.length<2 && message!=='Enviando arquivos...' &&<span className={`text-lg text-slate-900 text-center font-light mt-4`}>{message}</span>}
-           { alert!=='escolhido' && alert!=='upload' && <span className={`text-lg text-red-500 text-center font-light bottom-32 mt-4`}>{alert}</span>}
+           { alert!=='escolhido' && alert!=='upload' && alert!=='submitted' && <span className={`text-lg text-red-500 text-center font-light bottom-32 mt-4`}>{alert}</span>}
+           {titleExcel && <div className='flex justify-center items-center w-full'>
+              <InputForm setAlert={setAlert} setExcelArray={setExcelArray} excelArray={excelArray}/>
+           </div>}
            <label htmlFor="file" className='w-full py-4 rounded-lg  bg-[#58a4b0]  text-slate-50 font-bold   text-xl text-center mt-12 drop-shadow-xl'>Escolha os arquivos</label>
-            <input id="file" type="file" accept='.txt, .doc, .docx' className='hidden appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' onChange={(e)=>handleFileChange(e)} multiple name="input" onClick={()=>{
+           <input id="file" type="file" accept='.txt, .doc, .docx' className='hidden appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' onChange={(e)=>handleFileChange(e)} multiple name="input" onClick={()=>{
                if(fileNames.length>2){
                setFiles([])
                setFileNames([])
@@ -261,10 +279,12 @@ const FileUploader = () => {
                setMessage('')
               
                setProgress(0)
-            }}/>
+           }}/>
+
+          
            
            
-           {fileNames.length===2 && <button type="button" onClick={()=>handleUpload()} className={` w-full bg-blue-900 cursor-pointer mt-4 mb-4 px-8 py-4 rounded-lg drop-shadow-lg text-slate-50 `}>Upload</button>}
+           {fileNames.length===2 &&  alert==='submitted' && <button type="button" onClick={()=>handleUpload()} className={` w-full bg-blue-900 cursor-pointer mt-4 mb-4 px-8 py-4 rounded-lg drop-shadow-lg text-slate-50 `}>Upload</button>}
           
            { alert==='upload' && <ProgressBar value={progress} message={message}/>}
            {progress===100 && <Image src={spinner} alt={"loading"} className={`${ progress>0  && message!=="Arquivos enviados...aguarde os certificados" ? 'block' : 'hidden'}  w-20 animate-spin`}/>}
