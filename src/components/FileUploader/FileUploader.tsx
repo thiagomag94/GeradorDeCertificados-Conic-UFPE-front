@@ -135,7 +135,7 @@ const FileUploader = () => {
               files:formdata,
               excelProps: excelArray
             }
-            const res1= await axios.post(`${URL2}/upload`, formdata,  {
+            const res1= await axios.post(`${URL}/upload`, formdata,  {
               responseType:'blob',
               headers: {
               'Content-Type': 'multipart/form-data',
@@ -158,7 +158,7 @@ const FileUploader = () => {
               setAlert('upload')
               setStatus(200)
 
-              const res2 = await axios.post(`${URL2}/getFilenames`, formdata,  { 
+              const res2 = await axios.post(`${URL}/getFilenames`, formdata,  { 
                 headers: {
                 'Content-Type': 'multipart/form-data',
                 'Access-Control-Allow-Origin': '*'
