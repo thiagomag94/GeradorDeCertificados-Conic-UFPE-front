@@ -42,11 +42,12 @@ const FileUploader = () => {
   const [isDownloaded, setDownloaded] = useState<boolean>(false)
   const [status, setStatus] = useState<number>()
   const [isOpen, setOpen] = useState<boolean>(true)
+  const [beforeRequisition, setBefore] = useState<any>()
+  const [afterRequisition, setAfter] = useState<any>()
+  const [durationReq, setDuration] = useState<any>()
 
   const router = useRouter()
 
- 
-  
   function handleFileChange(e:any) {
     setMessage("Escolha o próximo arquivo")
     if(files.length<2){
@@ -72,9 +73,6 @@ const FileUploader = () => {
   }, [message])
  
  
-
-
-  
   useEffect(()=>{
     console.log(files)
     console.log(fileNames)
@@ -98,6 +96,12 @@ const FileUploader = () => {
       setAlert('txt escolhido')
     }
   }, [fileNames, files])
+
+  useEffect(()=>{
+    const timeInterval = afterRequisition-beforeRequisition
+    setDuration(timeInterval)
+    console.log(durationReq)
+  }, [afterRequisition])
 
   const handleFormData = async ()=>{
     return new Promise((resolve, reject)=>{
@@ -143,7 +147,8 @@ const FileUploader = () => {
               files:formdata,
               excelProps: excelArray
             }
-            const res1= await axios.post(`${URL}/upload`, formdata,  {
+            setBefore(new Date)
+            const res1= await axios.post(`${URL2}/upload`, formdata,  {
               responseType:'blob',
               headers: {
               'Content-Type': 'multipart/form-data',
@@ -155,7 +160,7 @@ const FileUploader = () => {
                   console.log("progresso evento", progressEvent)
                   console.log("event is loaded", progressEvent.loaded)
                   console.log("total arquivo", progressEvent.total)
-                  setProgress( percentCompleted)
+                  setProgress(percentCompleted)
                 
 
                 if(percentCompleted===100){
@@ -173,8 +178,8 @@ const FileUploader = () => {
               setFiles([])
               setAlert('upload')
               setStatus(200)
-
-              const res2 = await axios.post(`${URL}/getFilenames`, formdata,  { 
+              setAfter(new Date)
+              const res2 = await axios.post(`${URL2}/getFilenames`, formdata,  { 
                 headers: {
                 'Content-Type': 'multipart/form-data',
                 'Access-Control-Allow-Origin': '*'
@@ -306,7 +311,7 @@ const FileUploader = () => {
            { alert==='Upload Finished' && <div className='w-full mt-4 '><LinearDeterminate/></div>}
            
            {progress===100 && message!=="Arquivos enviados...aguarde os certificados" && <CircularProgress className='w-40 mt-8 mb-8'/>}
-           <span  className={`${ progress>0 && message!="Arquivos enviados...aguarde os certificados"? 'block' : 'hidden'} animate-pulse`}>{progress>0 ? 'Aguarde...estamos gerando seus certificados...' : message}</span>
+           <span  className={`${ progress>0 && message!="Arquivos enviados...aguarde os certificados"? 'block' : 'hidden'} animate-pulse`}>{(progress>0 && durationReq>10000)  ? 'Está levando mais tempo que o normal, aguarde mais um pouco...' : 'Aguarde...estamos gerando seus certificados...'}</span>
             {  arquivozip   && isOpen===true &&
             <div id="tela-certificados" className=' min-h-screen w-full bg-neutral-900/40 backdrop-blur-2xl gap-4 fixed top-0 left-0 right-0 flex flex-row justify-center items-center'>
               {
