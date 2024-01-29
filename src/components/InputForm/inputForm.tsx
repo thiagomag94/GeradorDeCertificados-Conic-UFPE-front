@@ -5,6 +5,7 @@ import InputCol from '../InputCol/InputCol'
 import InputSheet from '../InputSheet/InputSheet'
 
 
+
 const InputForm = (props:any) => {
     const {excelArray, setExcelArray, alert, setAlert} = props
     const [nameCol, setNameCol] = useState<string[]>([])

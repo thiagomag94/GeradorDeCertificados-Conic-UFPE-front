@@ -14,8 +14,11 @@ import docx from 'public/doc.png';
 import excel from 'public/excel.png'
 import DownloadAll from '../DonwloadAll/DownloadAll';
 import { saveAs } from 'file-saver';
-
+import Tooltip from '@mui/material/Tooltip';
+import { CircularProgress, LinearProgress } from '@mui/material';
 import InputForm from '../InputForm/inputForm';
+import LinearDeterminate from '../LinearDeterminate/LinearDeterminate';
+
 
 
 const FileUploader = () => {
@@ -89,6 +92,10 @@ const FileUploader = () => {
     setTitleDoc(nomeDOCX[0])
     const nomeEXCEL = fileNames.filter((nome)=> nome.endsWith(".xlsx"))
     setTitleExcel(nomeEXCEL[0])
+
+    if(nomeDOCX[0] && nomeTXT[0]){
+      setAlert('txt escolhido')
+    }
   }, [fileNames, files])
 
   const handleFormData = async ()=>{
@@ -135,7 +142,7 @@ const FileUploader = () => {
               files:formdata,
               excelProps: excelArray
             }
-            const res1= await axios.post(`${URL}/upload`, formdata,  {
+            const res1= await axios.post(`${URL2}/upload`, formdata,  {
               responseType:'blob',
               headers: {
               'Content-Type': 'multipart/form-data',
@@ -158,7 +165,7 @@ const FileUploader = () => {
               setAlert('upload')
               setStatus(200)
 
-              const res2 = await axios.post(`${URL}/getFilenames`, formdata,  { 
+              const res2 = await axios.post(`${URL2}/getFilenames`, formdata,  { 
                 headers: {
                 'Content-Type': 'multipart/form-data',
                 'Access-Control-Allow-Origin': '*'
@@ -264,7 +271,7 @@ const FileUploader = () => {
            <FilesGroup titleDoc={titleDoc} titleTxt={titleTxt} titleExcel={titleExcel} docImage={doc} txtImage={txt} excelImage={excel}  alerta={alert}/>
            
            { fileNames.length<2 && message!=='Enviando arquivos...' &&<span className={`text-lg text-slate-900 text-center font-light mt-4`}>{message}</span>}
-           { alert!=='escolhido' && alert!=='upload' && alert!=='submitted' && <span className={`text-lg text-red-500 text-center font-light bottom-32 mt-4`}>{alert}</span>}
+           { alert!=='escolhido' && alert!=='upload' && alert!=='submitted' && alert!=='txt escolhido' && <span className={`text-lg text-red-500 text-center font-light bottom-32 mt-4`}>{alert}</span>}
            {titleExcel && <div className='flex justify-center items-center w-full'>
               <InputForm setAlert={setAlert} setExcelArray={setExcelArray} excelArray={excelArray}/>
            </div>}
@@ -284,10 +291,12 @@ const FileUploader = () => {
           
            
            
-           {fileNames.length===2 &&  alert==='submitted' && <button type="button" onClick={()=>handleUpload()} className={` w-full bg-blue-900 cursor-pointer mt-4 mb-4 px-8 py-4 rounded-lg drop-shadow-lg text-slate-50 `}>Upload</button>}
+           {fileNames.length===2 &&  (alert==='submitted' || alert==='txt escolhido') && <button type="button" onClick={()=>handleUpload()} className={` w-full bg-blue-900 cursor-pointer mt-4 mb-4 px-8 py-4 rounded-lg drop-shadow-lg text-slate-50 `}>Upload</button>}
           
            { alert==='upload' && <ProgressBar value={progress} message={message}/>}
-           {progress===100 && <Image src={spinner} alt={"loading"} className={`${ progress>0  && message!=="Arquivos enviados...aguarde os certificados" ? 'block' : 'hidden'}  w-20 animate-spin`}/>}
+           { alert==='upload' && <div className='absolute top-0 w-full '><LinearDeterminate/></div>}
+           
+           {progress===100 && message!=="Arquivos enviados...aguarde os certificados" && <CircularProgress className='w-40 mt-8 mb-8'/>}
            <span  className={`${ progress>0 && message!="Arquivos enviados...aguarde os certificados"? 'block' : 'hidden'} animate-pulse`}>{progress>0 ? 'Aguarde...estamos gerando seus certificados...' : message}</span>
             {  arquivozip   && isOpen===true &&
             <div id="tela-certificados" className=' min-h-screen w-full bg-neutral-900/40 backdrop-blur-2xl gap-4 fixed top-0 left-0 right-0 flex flex-row justify-center items-center'>
