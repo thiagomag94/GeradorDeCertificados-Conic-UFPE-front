@@ -39,10 +39,10 @@ const InputForm = (props:any) => {
     }
 
     return (
-          <form className={`flex  items-center justify-between w-full p-2.5 gap-4 mt-8  rounded-lg`} onSubmit={(event)=>handleSubmit(event)}>
+          <form className={`relative flex  items-center justify-center w-full p-2.5 gap-4 mt-8  rounded-lg`} onSubmit={(event)=>handleSubmit(event)}>
             <InputCol setNameCol={setNameCol} nameCol={nameCol} alert={alert} />
             <InputSheet setSheetName={setSheetName} sheetName={sheetName} alert={alert} />
-            <button type='submit' className='p-2.5 bg-blue-400 rounded-lg'>Enviar</button>
+            <button type='submit' className='p-2.5 bg-blue-400 rounded-lg mt-6 text-slate-50 right-0'>Enviar</button>
           </form>
           
       )

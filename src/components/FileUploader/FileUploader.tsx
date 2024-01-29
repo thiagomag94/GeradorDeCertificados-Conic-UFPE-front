@@ -18,6 +18,7 @@ import Tooltip from '@mui/material/Tooltip';
 import { CircularProgress, LinearProgress } from '@mui/material';
 import InputForm from '../InputForm/inputForm';
 import LinearDeterminate from '../LinearDeterminate/LinearDeterminate';
+import FileUploadIcon from '@mui/icons-material/FileUpload';
 
 
 
@@ -130,7 +131,7 @@ const FileUploader = () => {
   
 
   const handleUpload = async () => {
-           setAlert('upload')
+           setAlert('clicou upload')
            setMessage('Enviando arquivos...')
            const URL = 'http://54.232.159.147:3001'
            const URL2 = 'http://localhost:3001'
@@ -148,12 +149,20 @@ const FileUploader = () => {
               'Content-Type': 'multipart/form-data',
               'Access-Control-Allow-Origin': '*'
               },
-              onUploadProgress: (progressEvent)=>{
-                if(progressEvent && progressEvent.total){
-                  console.log(progressEvent.loaded)
-                  console.log(progressEvent.total)
-                  setProgress( Math.round((progressEvent.loaded*100)/ (progressEvent.total)))
+              onUploadProgress: (progressEvent:any)=>{
+                
+                  const percentCompleted = Math.round((progressEvent?.loaded / progressEvent?.total)*100)
+                  console.log("progresso evento", progressEvent)
+                  console.log("event is loaded", progressEvent.loaded)
+                  console.log("total arquivo", progressEvent.total)
+                  setProgress( percentCompleted)
+                
+
+                if(percentCompleted===100){
+                  setAlert('Upload Finished')
                 }
+
+               
               }
             })
 
@@ -270,12 +279,12 @@ const FileUploader = () => {
         <div className='flex flex-col justify-between items-center w-full'>
            <FilesGroup titleDoc={titleDoc} titleTxt={titleTxt} titleExcel={titleExcel} docImage={doc} txtImage={txt} excelImage={excel}  alerta={alert}/>
            
-           { fileNames.length<2 && message!=='Enviando arquivos...' &&<span className={`text-lg text-slate-900 text-center font-light mt-4`}>{message}</span>}
-           { alert!=='escolhido' && alert!=='upload' && alert!=='submitted' && alert!=='txt escolhido' && <span className={`text-lg text-red-500 text-center font-light bottom-32 mt-4`}>{alert}</span>}
+           { fileNames.length<2 && message!=='Enviando arquivos...' && <span className={`text-lg text-slate-900 text-center font-light mt-4`}>{message}</span>}
+           { alert!=='escolhido' && alert!=='upload' && alert!=='clicou upload' && alert!=='Upload Finished' && alert!=='submitted' && alert!=='txt escolhido' && <span className={`text-lg text-red-500 text-center font-light bottom-32 mt-4`}>{alert}</span>}
            {titleExcel && <div className='flex justify-center items-center w-full'>
               <InputForm setAlert={setAlert} setExcelArray={setExcelArray} excelArray={excelArray}/>
            </div>}
-           <label htmlFor="file" className='w-full py-4 rounded-lg  bg-[#58a4b0]  text-slate-50 font-bold   text-xl text-center mt-12 drop-shadow-xl'>Escolha os arquivos</label>
+           <label htmlFor="file" className='w-full py-4 rounded-lg  bg-[#58a4b0] flex justify-center items-center gap-4 text-slate-50 font-bold   text-xl text-center mt-12 drop-shadow-xl cursor-pointer'><span>Escolha os arquivos</span></label>
            <input id="file" type="file" accept='.txt, .doc, .docx' className='hidden appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline' onChange={(e)=>handleFileChange(e)} multiple name="input" onClick={()=>{
                if(fileNames.length>2){
                setFiles([])
@@ -291,10 +300,10 @@ const FileUploader = () => {
           
            
            
-           {fileNames.length===2 &&  (alert==='submitted' || alert==='txt escolhido') && <button type="button" onClick={()=>handleUpload()} className={` w-full bg-blue-900 cursor-pointer mt-4 mb-4 px-8 py-4 rounded-lg drop-shadow-lg text-slate-50 `}>Upload</button>}
+           {fileNames.length===2 &&  (alert==='submitted' || alert==='txt escolhido') && <button type="button" onClick={()=>handleUpload()} className={` w-full bg-blue-900 cursor-pointer mt-4 mb-4 px-8 py-4 rounded-lg drop-shadow-lg text-slate-50 gap-4 font-bold `}>Upload <FileUploadIcon className='' fontSize="medium"/></button>}
           
-           { alert==='upload' && <ProgressBar value={progress} message={message}/>}
-           { alert==='upload' && <div className='absolute top-0 w-full '><LinearDeterminate/></div>}
+           { progress>0 && alert!=='Upload Finished' && alert!='upload' && <ProgressBar value={progress} message={message}/>}
+           { alert==='Upload Finished' && <div className='w-full mt-4 '><LinearDeterminate/></div>}
            
            {progress===100 && message!=="Arquivos enviados...aguarde os certificados" && <CircularProgress className='w-40 mt-8 mb-8'/>}
            <span  className={`${ progress>0 && message!="Arquivos enviados...aguarde os certificados"? 'block' : 'hidden'} animate-pulse`}>{progress>0 ? 'Aguarde...estamos gerando seus certificados...' : message}</span>
