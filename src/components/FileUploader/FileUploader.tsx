@@ -311,7 +311,7 @@ const FileUploader = () => {
            { alert==='Upload Finished' && <div className='w-full mt-4 '><LinearDeterminate/></div>}
            
            {progress===100 && message!=="Arquivos enviados...aguarde os certificados" && <CircularProgress className='w-40 mt-8 mb-8'/>}
-           <span  className={`${ progress>0 && message!="Arquivos enviados...aguarde os certificados"? 'block' : 'hidden'} animate-pulse`}>{(progress>0 && durationReq>10000)  ? 'Está levando mais tempo que o normal, aguarde mais um pouco...' : 'Aguarde...estamos gerando seus certificados...'}</span>
+           <span  className={`${ progress>0 && message!="Arquivos enviados...aguarde os certificados"? 'block' : 'hidden'} animate-pulse`}>{(progress>0 && durationReq>10000)  ? 'Está levando mais tempo que o normal, aguarde mais um pouco...' : progress>0 ? 'Aguarde...estamos gerando seus certificados...' : message}</span>
             {  arquivozip   && isOpen===true &&
             <div id="tela-certificados" className=' min-h-screen w-full bg-neutral-900/40 backdrop-blur-2xl gap-4 fixed top-0 left-0 right-0 flex flex-row justify-center items-center'>
               {
